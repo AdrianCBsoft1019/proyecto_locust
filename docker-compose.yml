@@ -15,13 +15,13 @@ services:
       start_period: 2s
 
     deploy:
-      replicas: 4 #levantar los cuatro contenedores identicos
+      replicas: 4 
 
       update_config:
-        parallelism: 1   #actualizar de 1 en 1
+        parallelism: 1  
         delay: 10s
         order: start-first
-        failure_action: rollback #revertir si algo falla
+        failure_action: rollback 
 
       resources:
         limits:
@@ -45,7 +45,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '2.0'      # más CPU que la API
+          cpus: '2.0'      
           memory: 512M
   flower:
     build: .
