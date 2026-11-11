@@ -1,12 +1,11 @@
-from locust import HttpUser, task, between
+from locust import HttpUser, task, constant_throughput
 
 class DescuentoUser(HttpUser):
-    wait_time = between(1, 2)
+    wait_time = constant_throughput(1)
 
     @task
-    def probar_aplicar_descuento(self):
-        
-        self.client.post("/aplicar-descuento")
+    def comprar(self):
+        self.client.post("/comprar-ticket")
 
 # from locust import HttpUser, task, between
 

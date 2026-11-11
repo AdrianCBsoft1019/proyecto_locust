@@ -4,6 +4,9 @@ services:
     expose:
       - "5000"
 
+    depends_on:          
+      - redis
+
     healthcheck:
       test: ["CMD-SHELL", "python -c 'import urllib.request; urllib.request.urlopen(\"http://0.0.0.0:5000/health\")' || exit 1"]
       interval: 2s
@@ -25,6 +28,38 @@ services:
           cpus: '0.15'
           memory: 128M
 
+          
+
+  redis:
+    image: redis:7-alpine
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 128M
+  celery-worker:
+    build: .
+    command: celery -A tareas worker --loglevel=info --concurrency=20 -E
+    depends_on:
+      - redis
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'      # más CPU que la API
+          memory: 512M
+  flower:
+    build: .
+    command: celery -A tareas flower --port=5555
+    ports:
+      - "5555:5555"
+    depends_on:
+      - redis
+      - celery-worker
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 128M
   nginx:
     image: nginx:alpine
     ports:
